@@ -7,22 +7,14 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import java.io.IOException;
+import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
     // Static so that the thread access the latest attribute
@@ -31,7 +23,6 @@ public class MainActivity extends AppCompatActivity {
 
     private static ProgressBar cargando;
     private static String url="http://www.telecinco.es/todoelmundoesbueno/pilar-rubio-estrena-todo-el-mundo-es-bueno_MDSVID20120625_0117_4.jpg";
-    private static Button descarga;
 
     /** Called when the activity is first created. */
     @Override
@@ -46,20 +37,10 @@ public class MainActivity extends AppCompatActivity {
         // get the latest imageView after restart of the application
         imageView = (ImageView) findViewById(R.id.imageView1);
         cargando = (ProgressBar) findViewById(R.id.cargando);
-        //descarga=(Button)findViewById(R.id.download);
         // Did we already download the image?
         if (downloadBitmap != null) {
             imageView.setImageBitmap(downloadBitmap);
         }
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        */
     }
 
 
@@ -77,31 +58,11 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-    // Utiliy method to download image from the internet
-    static private Bitmap downloadBitmap(String url) throws IOException {
-        HttpUriRequest request = new HttpGet(url.toString());
-        HttpClient httpClient = new DefaultHttpClient();
-        HttpResponse response = httpClient.execute(request);
-
-        StatusLine statusLine = response.getStatusLine();
-        int statusCode = statusLine.getStatusCode();
-        if (statusCode == 200) {
-            HttpEntity entity = response.getEntity();
-            byte[] bytes = EntityUtils.toByteArray(entity);
-
-            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0,
-                    bytes.length);
-            return bitmap;
-        } else {
-            throw new IOException("Download failed, HTTP response code "
-                    + statusCode + " - " + statusLine.getReasonPhrase());
-        }
-    }
     static public class MiTarea extends AsyncTask
             <String,Integer,Bitmap>{
         protected void onPreExecute(){
             cargando.setVisibility(View.VISIBLE);
+            imageView.setVisibility(View.GONE);
             //descarga.setEnabled(false);
         }
         protected void onProgressUpdate(Integer... progress) {
@@ -113,8 +74,15 @@ public class MainActivity extends AppCompatActivity {
                 publishProgress(i);
             }
             try {
-                downloadBitmap =
-                        downloadBitmap(params[0]);
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            try {
+                URL imageURL = new URL(params[0]);
+
+                downloadBitmap =BitmapFactory.decodeStream(imageURL.openStream());
+
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -122,9 +90,12 @@ public class MainActivity extends AppCompatActivity {
             return downloadBitmap;
         }
         protected void onPostExecute(Bitmap bm){
+
             imageView.setImageBitmap(bm);
-            //dialog.dismiss();
             cargando.setVisibility(View.GONE);
+            imageView.setVisibility(View.VISIBLE);
+            //dialog.dismiss();
+
             //descarga.setEnabled(true);
         }
 
