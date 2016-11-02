@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/AsyncTask.iml" filepath="$PROJECT_DIR$/AsyncTask.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AsyncTaskFull.iml" filepath="$PROJECT_DIR$/AsyncTaskFull.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
