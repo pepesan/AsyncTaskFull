@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
     // Static so that the thread access the latest attribute
     private static ImageView imageView;
     private static Bitmap downloadBitmap;
-
+    private MiTarea tarea;
     private static ProgressBar cargando;
     private static String url="https://i1.wp.com/cursosdedesarrollo.com/wp-content/uploads/2017/05/final-architecture.png";
 
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_download) {
             Log.d("Boton Descargar", "Pulsado");
             downloadAction();
             return true;
@@ -129,13 +129,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void downloadAction(){
-        MiTarea tarea=new MiTarea();
+        tarea=new MiTarea();
         tarea.execute(new String[]{url});
     }
     public void resetAction(){
         if (downloadBitmap != null) {
             downloadBitmap = null;
         }
+        tarea.cancel(true);
+        cargando.setVisibility(View.GONE);
+        imageView.setVisibility(View.VISIBLE);
         imageView.setImageResource(R.mipmap.ic_launcher);
     }
 }
